@@ -147,7 +147,7 @@ def single_restaurant(id):
             elif len(restaurant) == 0:
                 return jsonify({ 'message': 'It seems it does not exist :o' }), 404
             else:
-                return jsonify({ 'message': 'Im sorry, something went wrong :o' }), 500
+                return jsonify({ 'message': 'Im sorry, It seems there more than one :o' }), 500
         except Exception as e:
             print(e)
             return jsonify({ 'message': 'Im sorry, something went wrong :o' }), 500
