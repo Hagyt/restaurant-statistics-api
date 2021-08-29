@@ -104,4 +104,5 @@ try:
         # Commit the transaction
         conn.commit()
 except Exception as e:
-    print(e)
+    # print(e)
+    pass
