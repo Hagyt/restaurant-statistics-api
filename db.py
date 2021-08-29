@@ -52,6 +52,11 @@ try:
     # Set data as DataFrame
     df = pd.DataFrame(data)
 
+    # Set query to verify if restaurant exists
+    select_query = """
+    SELECT * FROM restaurant WHERE id = ?
+    """
+
     # Set query to insert data
     insert_sql = """
     INSERT INTO restaurant(
@@ -83,25 +88,31 @@ try:
         lat = row['lat']
         lng = row['lng']
 
-        # Set values as tuple
-        values = (
-            id,
-            rating,
-            name,
-            site,
-            email,
-            phone,
-            street,
-            city,
-            state,
-            lat,
-            lng
-        )
+        restaurant = cursor.execute(select_query, [id]).fetchone()
 
-        # Execute sql
-        cursor.execute(insert_sql, values)
+        if restaurant is None:
 
-        # Commit the transaction
-        conn.commit()
+            # Set values as tuple
+            values = (
+                id,
+                rating,
+                name,
+                site,
+                email,
+                phone,
+                street,
+                city,
+                state,
+                lat,
+                lng
+            )
+
+            # Execute sql
+            cursor.execute(insert_sql, values)
+
+            # Commit the transaction
+            conn.commit()
+        else:
+            print('There is already a restaurant with the id')
 except Exception as e:
     print(e)
