@@ -10,7 +10,56 @@ from models import Restaurant
 # db
 from db import db_connection
 
+# math
+import math
+
 app = Flask(__name__)
+
+def get_restaurants_inside_circle(lat: float, lng: float, radius: float):
+    # Connect to db
+    conn = db_connection()
+    # Set query to get all restaurants
+    query = "SELECT * FROM restaurant"
+
+    try:
+        # Set cursor and execute the query
+        cursor = conn.cursor()
+        data = cursor.execute(query).fetchall()
+
+        # Get the restaurants from data and set it into a list
+        restaurants = [
+            Restaurant(
+                id=row[0],
+                rating=row[1],
+                name=row[2],
+                site=row[3],
+                email=row[4],
+                phone=row[5],
+                street=row[6],
+                city=row[7],
+                state=row[8],
+                lat=row[9],
+                lng=row[10]
+            ).__dict__
+
+            for row in data
+
+            # Calculate distances and determine if it is inside
+            if pow((float(row[9]) - lat), 2) + pow((float(row[10]) - lng), 2) <= radius
+        ]
+
+        return restaurants
+    except Exception as e:
+        print(e)
+        return None
+
+# Function to get average rating of a restaurant list
+def get_average_rating(restaurants: list):
+    for restaurant in restaurants:
+        pass
+        
+
+
 
 @app.route('/restaurants')
 def get_restaurants():
@@ -45,7 +94,7 @@ def get_restaurants():
 
         # Check if there are restaurants
         if len(restaurants) > 0:
-            return jsonify(restaurants)
+            return jsonify(restaurants), 200
         else:
             return jsonify({ 'message': 'It seems Its empty :o' }), 404
     except Exception as e:
@@ -223,6 +272,54 @@ def single_restaurant(id):
         except Exception as e:
             print(e)
             return jsonify({ 'message': 'Im sorry, something went wrong :o' }), 500
+
+
+# Statistics endpoint    
+@app.route('/restaurants/statistics', methods=['GET'])
+def get_statistics():
+    try:
+        # Get parameters 
+        latitude = float(request.args.get("latitude"))
+        longitude = float(request.args.get("longitude"))
+        radius = float(request.args.get("radius"))
+
+        restaurants = get_restaurants_inside_circle(latitude, longitude, radius)
+
+        # Check if there are restaurants
+        if restaurants is not None:
+            if len(restaurants) > 0:
+                # Count restaurants
+                count = len(restaurants)
+
+                """
+                Average rating
+                """
+                # Get rating values from restaurants
+                rating_list = [r['rating'] for r in restaurants]
+                # Calculate average rating
+                average = sum(rating_list) / count
+
+                """
+                Standard deviation
+                """
+                # Get squared distances
+                squared_distances = list(map(lambda x: pow((x - average), 2), rating_list))
+                # Sum distances, divide by number of data and get square root
+                standard_deviation = math.sqrt(sum(squared_distances) / count)
+
+                # Response to client
+                return jsonify({
+                                    'count': count,
+                                    'avg': average,
+                                    'std': standard_deviation
+                            }), 200
+            else:
+                return jsonify({ 'message': 'It seems There is nothing here :)' }), 404
+        else:
+            return jsonify({ 'message': 'Im sorry, something went wrong :o' }), 500
+    except Exception as e:
+            print(e)
+            return jsonify({ 'message': 'Im sorry, something went wrong, verify the params, please' }), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
