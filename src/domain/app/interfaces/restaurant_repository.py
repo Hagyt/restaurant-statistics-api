@@ -21,5 +21,5 @@ class RestaurantRepository(ABC):
 
 
     @abstractmethod
-    def get_all(self, query_params=None) -> List[Restaurant]:
+    def get_all(self, query_params: dict = None) -> List[Restaurant]:
         pass
