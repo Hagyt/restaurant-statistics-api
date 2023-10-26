@@ -4,7 +4,7 @@ from dataclasses import dataclass
 class Restaurant:
     
     id: str = None
-    rating: str 
+    rating: int 
     name: str 
     site: str   
     email: str 
