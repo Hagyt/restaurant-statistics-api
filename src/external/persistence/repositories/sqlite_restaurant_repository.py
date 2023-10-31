@@ -12,7 +12,7 @@ class SqliteRestaurantRepository(RestaurantRepository):
     def __init__(self) -> None:
         try:
             self.conn = sqlite3.connect('restaurants.sqlite')
-            self._create_table_if_not_exists()
+            self._create_or_recreate_table_if_exists()
         except sqlite3.Error as e:
             print(e)
             raise e
@@ -190,7 +190,7 @@ class SqliteRestaurantRepository(RestaurantRepository):
         lng = center_point.x
         return pow((float(restaurant.lat[9]) - lat), 2) + pow((float(restaurant.lng) - lng), 2) <= radius
     
-    def _create_table_if_not_exists(self):
+    def _create_or_recreate_table_if_exists(self):
         # Open cursor
         cursor = self.conn.cursor()
         # Set and execute query to drop table if it exists
