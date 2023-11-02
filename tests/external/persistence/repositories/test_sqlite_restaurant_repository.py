@@ -140,6 +140,7 @@ class TestSqliteRestaurantRepository(TestCase):
 
 
     def test_get_restaurants_inside_circle(self):
+        number_total_restaurants = 3
         long = -99.1313996519641
         lat = 19.4420166275981
         radius = 10
@@ -153,6 +154,5 @@ class TestSqliteRestaurantRepository(TestCase):
             'radius': radius
         }
         restaurants = self.repository.get_all(query_params)
-        print(len(restaurants))
         self.assertIsInstance(restaurants, list)
-        # self.assertEqual(len(restaurants), number_total_restaurants)
+        self.assertEqual(len(restaurants), number_total_restaurants)
