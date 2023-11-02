@@ -2,9 +2,11 @@ from typing import List
 from unittest import TestCase
 
 import pandas as pd
+from shapely.geometry import Point
 
 from src.domain.model import Restaurant
 from src.external.persistence.repositories import SqliteRestaurantRepository
+from src.domain import INSIDE_CIRCLE_SEARCH
 
 
 class TestSqliteRestaurantRepository(TestCase):
@@ -135,3 +137,22 @@ class TestSqliteRestaurantRepository(TestCase):
         restaurants = self.repository.get_all()
         self.assertIsInstance(restaurants, list)
         self.assertEqual(len(restaurants), number_total_restaurants)
+
+
+    def test_get_restaurants_inside_circle(self):
+        long = -99.1313996519641
+        lat = 19.4420166275981
+        radius = 10
+        ## Create a Shapely Point object representing the circle's center
+        circle_center = Point(long, lat)
+
+        ## Set query params for the inquiry to the repository
+        query_params = {
+            'function': INSIDE_CIRCLE_SEARCH,
+            'center_point': circle_center,
+            'radius': radius
+        }
+        restaurants = self.repository.get_all(query_params)
+        print(len(restaurants))
+        self.assertIsInstance(restaurants, list)
+        # self.assertEqual(len(restaurants), number_total_restaurants)

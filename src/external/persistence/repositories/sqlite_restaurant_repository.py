@@ -1,11 +1,12 @@
-from typing import List
+import math
 import sqlite3
+from typing import List
 
 from shapely.geometry import Point
 
-from src.domain import INSIDE_CIRCLE_SEARCH
 from src.domain.model.restaurant import Restaurant
 from src.domain.app.interfaces.restaurant_repository import RestaurantRepository
+from src.domain import INSIDE_CIRCLE_SEARCH
 
 class SqliteRestaurantRepository(RestaurantRepository):
     
@@ -191,6 +192,8 @@ class SqliteRestaurantRepository(RestaurantRepository):
     
     def _apply_query_params(self, restaurants: List[Restaurant], query_params: dict) -> List[Restaurant]:
         
+        filtered_restaurants = restaurants.copy()
+        
         function_query_param = query_params.get("function")
 
         if function_query_param == INSIDE_CIRCLE_SEARCH:
@@ -199,18 +202,18 @@ class SqliteRestaurantRepository(RestaurantRepository):
 
             filtered_restaurants = [
                 r for r in restaurants 
-                if self._is_inside_circle(center_query_param, radius_query_param)
+                if self._is_inside_circle(r, center_query_param, radius_query_param)
             ]
             
 
         return filtered_restaurants
     
 
-    def _is_inside_circle(restaurant: Restaurant, center_point: Point, radius: float):
+    def _is_inside_circle(self, restaurant: Restaurant, center_point: Point, radius: float):
         # Calculate distances and determine if it is inside
-        lat = center_point.y
-        lng = center_point.x
-        return pow((float(restaurant.lat[9]) - lat), 2) + pow((float(restaurant.lng) - lng), 2) <= radius
+        lat = float(center_point.y)
+        lng = float(center_point.x)
+        return math.sqrt(pow((float(restaurant.lat) - lat), 2) + pow((float(restaurant.lng) - lng), 2)) <= radius / 10000
     
     def _create_or_recreate_table_if_exists(self):
         # Open cursor
