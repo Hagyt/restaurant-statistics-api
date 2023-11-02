@@ -3,7 +3,6 @@ from dataclasses import dataclass
 @dataclass
 class Restaurant:
     
-    id: str = None
     rating: int 
     name: str 
     site: str   
@@ -14,3 +13,4 @@ class Restaurant:
     state: str 
     lat: float 
     lng: float 
+    id: str = None
