@@ -1,11 +1,12 @@
-from typing import List
+import math
 import sqlite3
+from typing import List
 
 from shapely.geometry import Point
 
-from src.domain import INSIDE_CIRCLE_SEARCH
 from src.domain.model.restaurant import Restaurant
 from src.domain.app.interfaces.restaurant_repository import RestaurantRepository
+from src.domain import INSIDE_CIRCLE_SEARCH
 
 class SqliteRestaurantRepository(RestaurantRepository):
     
@@ -79,7 +80,19 @@ class SqliteRestaurantRepository(RestaurantRepository):
             WHERE id = ?
         """
         try:
-            restaurant = Restaurant(object_id, **data)
+            restaurant = Restaurant(
+                data.get("rating"),
+                data.get("name"),
+                data.get("site"),
+                data.get("email"),
+                data.get("phone"),
+                data.get("street"),
+                data.get("city"),
+                data.get("state"),
+                data.get("lat"),
+                data.get("lng"),
+                object_id
+            )
             # Set values to insert
             data = (
                 restaurant.rating,
@@ -119,8 +132,20 @@ class SqliteRestaurantRepository(RestaurantRepository):
             if data is None:
                 raise Exception("Not found")
 
-            restaurant = Restaurant(*data)
-            cursor.execute(delete_sql, [object_id])
+            restaurant = Restaurant(
+                data[1],
+                data[2],
+                data[3],
+                data[4],
+                data[5],
+                data[6],
+                data[7],
+                data[8],
+                data[9],
+                data[10],
+                data[0]
+            )
+            cursor.execute(delete_sql, (object_id,))
             self.conn.commit()
             
             return restaurant
@@ -156,7 +181,8 @@ class SqliteRestaurantRepository(RestaurantRepository):
                 for row in data
             ]
 
-            restaurants = self._apply_query_params(query_params)
+            if query_params is not None:
+                restaurants = self._apply_query_params(restaurants, query_params)
 
             return restaurants
         except Exception as e:
@@ -165,9 +191,8 @@ class SqliteRestaurantRepository(RestaurantRepository):
         
     
     def _apply_query_params(self, restaurants: List[Restaurant], query_params: dict) -> List[Restaurant]:
-
-        if query_params is None:
-            filtered_restaurants = restaurants.copy()
+        
+        filtered_restaurants = restaurants.copy()
         
         function_query_param = query_params.get("function")
 
@@ -177,18 +202,18 @@ class SqliteRestaurantRepository(RestaurantRepository):
 
             filtered_restaurants = [
                 r for r in restaurants 
-                if self._is_inside_circle(center_query_param, radius_query_param)
+                if self._is_inside_circle(r, center_query_param, radius_query_param)
             ]
             
 
         return filtered_restaurants
     
 
-    def _is_inside_circle(restaurant: Restaurant, center_point: Point, radius: float):
+    def _is_inside_circle(self, restaurant: Restaurant, center_point: Point, radius: float):
         # Calculate distances and determine if it is inside
-        lat = center_point.y
-        lng = center_point.x
-        return pow((float(restaurant.lat[9]) - lat), 2) + pow((float(restaurant.lng) - lng), 2) <= radius
+        lat = float(center_point.y)
+        lng = float(center_point.x)
+        return math.sqrt(pow((float(restaurant.lat) - lat), 2) + pow((float(restaurant.lng) - lng), 2)) <= radius / 10000
     
     def _create_or_recreate_table_if_exists(self):
         # Open cursor
