@@ -180,7 +180,8 @@ class SqliteRestaurantRepository(RestaurantRepository):
                 for row in data
             ]
 
-            restaurants = self._apply_query_params(query_params)
+            if query_params is not None:
+                restaurants = self._apply_query_params(restaurants, query_params)
 
             return restaurants
         except Exception as e:
@@ -189,9 +190,6 @@ class SqliteRestaurantRepository(RestaurantRepository):
         
     
     def _apply_query_params(self, restaurants: List[Restaurant], query_params: dict) -> List[Restaurant]:
-
-        if query_params is None:
-            filtered_restaurants = restaurants.copy()
         
         function_query_param = query_params.get("function")
 

@@ -1,3 +1,4 @@
+from typing import List
 from unittest import TestCase
 
 import pandas as pd
@@ -127,3 +128,10 @@ class TestSqliteRestaurantRepository(TestCase):
         # restaurant_id = "1"
         restaurant_deleted = self.repository.delete(restaurant_id)
         self.assertIsInstance(restaurant_deleted, Restaurant)
+
+
+    def test_get_all_restaurants(self):
+        number_total_restaurants = 100
+        restaurants = self.repository.get_all()
+        self.assertIsInstance(restaurants, list)
+        self.assertEqual(len(restaurants), number_total_restaurants)
