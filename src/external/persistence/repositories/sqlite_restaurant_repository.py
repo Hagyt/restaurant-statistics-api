@@ -79,7 +79,19 @@ class SqliteRestaurantRepository(RestaurantRepository):
             WHERE id = ?
         """
         try:
-            restaurant = Restaurant(object_id, **data)
+            restaurant = Restaurant(
+                data.get("rating"),
+                data.get("name"),
+                data.get("site"),
+                data.get("email"),
+                data.get("phone"),
+                data.get("street"),
+                data.get("city"),
+                data.get("state"),
+                data.get("lat"),
+                data.get("lng"),
+                object_id
+            )
             # Set values to insert
             data = (
                 restaurant.rating,
@@ -119,8 +131,20 @@ class SqliteRestaurantRepository(RestaurantRepository):
             if data is None:
                 raise Exception("Not found")
 
-            restaurant = Restaurant(*data)
-            cursor.execute(delete_sql, [object_id])
+            restaurant = Restaurant(
+                data[1],
+                data[2],
+                data[3],
+                data[4],
+                data[5],
+                data[6],
+                data[7],
+                data[8],
+                data[9],
+                data[10],
+                data[0]
+            )
+            cursor.execute(delete_sql, (object_id,))
             self.conn.commit()
             
             return restaurant

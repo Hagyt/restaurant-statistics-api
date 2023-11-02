@@ -103,5 +103,27 @@ class TestSqliteRestaurantRepository(TestCase):
         restaurant_created = self.repository.create(restaurant)
         self.assertIsInstance(restaurant_created, Restaurant)
 
-        
     
+    def test_update_restaurant(self):
+        restaurant_id = "edb50561-46f9-4541-9c04-8de82401cc13"
+        restaurant_data = {
+            "rating": 1,
+            "name": "New_Test_Restaurant_2",
+            "site": "https://site.fake2.com",
+            "email": "email.fake2@test.com",
+            "phone": "534845201 E 2",
+            "street": "44545e Fake street2",
+            "city": "City_Fake2",
+            "state": "Fake_State2",
+            "lat": 19.4400570537132,
+            "lng": -98.1270470974242
+        }
+        restaurant_updated = self.repository.update(restaurant_id, restaurant_data)
+        self.assertIsInstance(restaurant_updated, Restaurant)
+
+        
+    def test_delete_restaurant(self):
+        restaurant_id = "edb50561-46f9-4541-9c04-8de82401cc13"
+        # restaurant_id = "1"
+        restaurant_deleted = self.repository.delete(restaurant_id)
+        self.assertIsInstance(restaurant_deleted, Restaurant)
