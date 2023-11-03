@@ -110,6 +110,22 @@ class TestRestaurantService(TestCase):
             "id": "1"
         }
         restaurant_created = self.restaurant_service.create_restaurant(restaurant_data)
-        print(restaurant_created)
         self.assertIsInstance(restaurant_created, Restaurant)
-        
+
+    
+    def test_update_restaurant(self):
+        restaurant_data = {
+            "rating": 1,
+            "name": "New_Test_Restaurant_2",
+            "site": "https://site.fake2.com",
+            "email": "email.fake2@test.com",
+            "phone": "534845201 E 2",
+            "street": "44545e Fake street2",
+            "city": "City_Fake2",
+            "state": "Fake_State2",
+            "lat": 19.4400570537132,
+            "lng": -98.1270470974242,
+            "id": "edb50561-46f9-4541-9c04-8de82401cc13"
+        }
+        restaurant_updated = self.restaurant_service.update_restaurant(restaurant_data)
+        self.assertIsInstance(restaurant_updated, Restaurant)

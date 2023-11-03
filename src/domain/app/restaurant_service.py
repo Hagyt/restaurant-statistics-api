@@ -23,8 +23,7 @@ class RestaurantService:
 
 
     def update_restaurant(self, data: dict) -> Restaurant:
-        restaurant_update = Restaurant(**data)
-        return self.restaurant_repository.update(restaurant_update)
+        return self.restaurant_repository.update(data.get("id"), data)
 
 
     def remove_restaurant(self, restaurant_id: str) -> Restaurant:
