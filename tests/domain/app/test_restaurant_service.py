@@ -129,3 +129,9 @@ class TestRestaurantService(TestCase):
         }
         restaurant_updated = self.restaurant_service.update_restaurant(restaurant_data)
         self.assertIsInstance(restaurant_updated, Restaurant)
+
+
+    def test_remove_restaurant(self):
+        restaurant_id = "edb50561-46f9-4541-9c04-8de82401cc13"
+        restaurant_deleted = self.restaurant_service.remove_restaurant(restaurant_id)
+        self.assertIsInstance(restaurant_deleted, Restaurant)
