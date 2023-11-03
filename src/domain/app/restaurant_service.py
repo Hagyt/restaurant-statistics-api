@@ -5,6 +5,7 @@ from shapely.geometry import Point
 
 from src.domain.model import Restaurant
 from src.domain.app.interfaces import RestaurantRepository
+from src.domain import INSIDE_CIRCLE_SEARCH
 
 
 class RestaurantService:
@@ -36,7 +37,7 @@ class RestaurantService:
 
         ## Set query params for the inquiry to the repository
         query_params = {
-            'function': 'inside_circle',
+            'function': INSIDE_CIRCLE_SEARCH,
             'center_point': circle_center,
             'radius': radius
         }

@@ -135,3 +135,14 @@ class TestRestaurantService(TestCase):
         restaurant_id = "edb50561-46f9-4541-9c04-8de82401cc13"
         restaurant_deleted = self.restaurant_service.remove_restaurant(restaurant_id)
         self.assertIsInstance(restaurant_deleted, Restaurant)
+
+
+    def test_get_area_restaurants_statistics(self):
+        long = -99.1313996519641
+        lat = 19.4420166275981
+        radius = 10
+        statistics = self.restaurant_service.get_area_restaurants_statistics(lat, long, radius)
+        self.assertIsInstance(statistics, dict)
+        self.assertEqual(statistics["count"], 3)
+        self.assertEqual(statistics["avg"], 2.0)
+        self.assertEqual(statistics["std"], 1.632993161855452)
