@@ -1,9 +1,11 @@
+import uuid
+
 from marshmallow import Schema, fields
 
 
 class RestaurantSchema(Schema):
     
-    id = fields.Str()
+    id = fields.UUID(load_default=uuid.uuid4)
     rating = fields.Int()
     name = fields.Str()
     site = fields.Str()   

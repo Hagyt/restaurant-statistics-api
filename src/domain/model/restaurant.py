@@ -1,3 +1,4 @@
+from uuid import UUID
 from dataclasses import dataclass
 
 @dataclass
@@ -13,4 +14,4 @@ class Restaurant:
     state: str 
     lat: float 
     lng: float 
-    id: str = None
+    id: UUID = None
