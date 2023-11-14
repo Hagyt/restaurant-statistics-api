@@ -30,3 +30,19 @@ def save_restaurant(json_data):
     restaurant_service = RestaurantService(restaurant_repository)
     restaurant_created = restaurant_service.create_restaurant(validated_data)    
     return create_response(restaurant_created, RestaurantSchema)
+
+
+@blueprint.route("/restaurants/<string:id>", methods=["PUT"])
+@post_data_required
+def update_restaurant(json_data, id):
+    # Validate data
+    json_data["id"] = id
+    restaurant_schema = RestaurantSchema()
+    validated_data = restaurant_schema.load(json_data)
+
+    # Update restaurant using service
+    restaurant_repository = SqliteRestaurantRepository()
+    restaurant_service = RestaurantService(restaurant_repository)
+    print(validated_data)
+    restaurant_updated = restaurant_service.update_restaurant(validated_data)
+    return create_response(restaurant_updated, RestaurantSchema)

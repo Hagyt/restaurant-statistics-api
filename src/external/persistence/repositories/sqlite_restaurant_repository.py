@@ -1,5 +1,6 @@
 import math
 import sqlite3
+from uuid import UUID
 from typing import List
 
 from shapely.geometry import Point
@@ -104,7 +105,7 @@ class SqliteRestaurantRepository(RestaurantRepository):
                 restaurant.state,
                 restaurant.lat,
                 restaurant.lng,
-                restaurant.id,
+                restaurant.id.__str__(),
             )
 
             # Set cursor and execute the insert the new restaurant
