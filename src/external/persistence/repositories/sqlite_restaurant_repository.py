@@ -1,5 +1,6 @@
 import math
 import sqlite3
+from uuid import UUID
 from typing import List
 
 from shapely.geometry import Point
@@ -13,7 +14,6 @@ class SqliteRestaurantRepository(RestaurantRepository):
     def __init__(self) -> None:
         try:
             self.conn = sqlite3.connect('restaurants.sqlite')
-            self._create_or_recreate_table_if_exists()
         except sqlite3.Error as e:
             print(e)
             raise e
@@ -40,7 +40,7 @@ class SqliteRestaurantRepository(RestaurantRepository):
         try:
             # Set values to insert
             data = (
-                restaurant.id,
+                restaurant.id.__str__(),
                 restaurant.rating,
                 restaurant.name,
                 restaurant.site,
@@ -105,7 +105,7 @@ class SqliteRestaurantRepository(RestaurantRepository):
                 restaurant.state,
                 restaurant.lat,
                 restaurant.lng,
-                restaurant.id,
+                restaurant.id.__str__(),
             )
 
             # Set cursor and execute the insert the new restaurant
@@ -143,7 +143,7 @@ class SqliteRestaurantRepository(RestaurantRepository):
                 data[8],
                 data[9],
                 data[10],
-                data[0]
+                UUID(data[0])
             )
             cursor.execute(delete_sql, (object_id,))
             self.conn.commit()
@@ -215,7 +215,7 @@ class SqliteRestaurantRepository(RestaurantRepository):
         lng = float(center_point.x)
         return math.sqrt(pow((float(restaurant.lat) - lat), 2) + pow((float(restaurant.lng) - lng), 2)) <= radius / 10000
     
-    def _create_or_recreate_table_if_exists(self):
+    def create_or_recreate_table_if_exists(self):
         # Open cursor
         cursor = self.conn.cursor()
         # Set and execute query to drop table if it exists
