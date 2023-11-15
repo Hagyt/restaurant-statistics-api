@@ -143,7 +143,7 @@ class SqliteRestaurantRepository(RestaurantRepository):
                 data[8],
                 data[9],
                 data[10],
-                data[0]
+                UUID(data[0])
             )
             cursor.execute(delete_sql, (object_id,))
             self.conn.commit()

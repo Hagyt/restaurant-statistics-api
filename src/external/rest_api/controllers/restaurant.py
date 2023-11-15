@@ -43,6 +43,15 @@ def update_restaurant(json_data, id):
     # Update restaurant using service
     restaurant_repository = SqliteRestaurantRepository()
     restaurant_service = RestaurantService(restaurant_repository)
-    print(validated_data)
     restaurant_updated = restaurant_service.update_restaurant(validated_data)
     return create_response(restaurant_updated, RestaurantSchema)
+
+
+@blueprint.route("/restaurants/<string:id>", methods=["DELETE"])
+def remove_restaurant(id):
+    # Update restaurant using service
+    restaurant_repository = SqliteRestaurantRepository()
+    restaurant_service = RestaurantService(restaurant_repository)
+    restaurant_removed = restaurant_service.remove_restaurant(id)
+    return create_response(restaurant_removed, RestaurantSchema)
+    
