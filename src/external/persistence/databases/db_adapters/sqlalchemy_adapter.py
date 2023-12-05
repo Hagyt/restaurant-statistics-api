@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from src.external.persistence.databases import OperationalException
-from src.external.persistence.databases import SQLALCHEMY_DATABASE_URI
+from src.external.persistence import OperationalException
+from src.external.persistence import SQLALCHEMY_DATABASE_URI
 
 sqlalchemy_db = SQLAlchemy()
 
