@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-from .external.persistence.databases import SQLALCHEMY_DATABASE_URI
+from .external.persistence import SQLALCHEMY_DATABASE_URI
 
 load_dotenv()
 
