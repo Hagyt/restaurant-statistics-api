@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.external.persistence.databases import sqlalchemy_db as db
 
 
-class Restaurant(db.Model):
+class RestaurantModel(db.Model):
     __tablename__ = "restaurant"
     id: Mapped[str] = mapped_column(Uuid, primary_key=True)
     rating: Mapped[int] = mapped_column(Integer)

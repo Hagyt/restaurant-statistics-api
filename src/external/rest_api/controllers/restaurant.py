@@ -3,7 +3,7 @@ from flask import Blueprint
 from src.external.rest_api.middleware import post_data_required, qparams_required
 from src.external.rest_api.responses import create_response
 from src.external.rest_api.schemas import RestaurantSchema, SearchAreaSchema, StatisticsSchema
-from src.external.persistence.repositories import SqliteRestaurantRepository
+from src.external.persistence.repositories import SqliteRestaurantRepository, SqlalchemyRestaurantRepository
 from src.domain.app.restaurant_service import RestaurantService
 
 
@@ -26,7 +26,7 @@ def save_restaurant(json_data):
     validated_data = restaurant_schema.load(json_data)
 
     # Create restaurant using service
-    restaurant_repository = SqliteRestaurantRepository()
+    restaurant_repository = SqlalchemyRestaurantRepository()
     restaurant_service = RestaurantService(restaurant_repository)
     restaurant_created = restaurant_service.create_restaurant(validated_data)    
     return create_response(restaurant_created, RestaurantSchema)
