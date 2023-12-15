@@ -17,3 +17,19 @@ class RestaurantModel(db.Model):
     state: Mapped[str] = mapped_column(String)
     lat: Mapped[float] = mapped_column(Float)
     lng: Mapped[float] = mapped_column(Float)
+
+
+    def update(self, db, data, commit=True):
+
+        for attr, value in data.items():
+            setattr(self, attr, value)
+
+        if commit:
+            db.session.commit()
+
+    
+    def delete(self, db, commit=True):
+        db.session.delete(self)
+
+        if commit:
+            db.session.commit()
