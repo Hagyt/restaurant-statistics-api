@@ -14,8 +14,8 @@ blueprint = Blueprint("restaurant", __name__)
 def get_restaurants():
     restaurant_repository = SqlalchemyRestaurantRepository()
     restaurant_service = RestaurantService(restaurant_repository)
-    restaurants = restaurant_service.get_all_restaurants()
-    return create_response(restaurants, PaginatedRestaurants)
+    paginatedRestaurants = restaurant_service.get_all_restaurants()
+    return create_response(paginatedRestaurants, PaginatedRestaurants)
 
 
 @blueprint.route("/restaurants", methods=["POST"])

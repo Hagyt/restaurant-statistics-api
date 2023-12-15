@@ -41,7 +41,7 @@ class RestaurantService:
             'center_point': circle_center,
             'radius': radius
         }
-        restaurants = self.restaurant_repository.get_all(query_params)
+        paginatedRestaurants = self.restaurant_repository.get_all(query_params)
 
         # Init stastistics object
         statistics = {
@@ -51,15 +51,15 @@ class RestaurantService:
         }
 
         # Check if there are restaurants
-        if len(restaurants) > 0:
+        if len(paginatedRestaurants.items) > 0:
             # Count restaurants
-            count = len(restaurants)
+            count = len(paginatedRestaurants.items)
 
             """
             Average rating
             """
             # Get rating values from restaurants
-            rating_list = [r.rating for r in restaurants]
+            rating_list = [r.rating for r in paginatedRestaurants.items]
             # Calculate average rating
             average = sum(rating_list) / count
 
