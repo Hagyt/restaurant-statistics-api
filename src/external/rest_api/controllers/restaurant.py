@@ -2,7 +2,7 @@ from flask import Blueprint
 
 from src.external.rest_api.middleware import post_data_required, qparams_required
 from src.external.rest_api.responses import create_response
-from src.external.rest_api.schemas import RestaurantSchema, SearchAreaSchema, StatisticsSchema
+from src.external.rest_api.schemas import RestaurantSchema, SearchAreaSchema, StatisticsSchema, PaginatedRestaurants
 from src.external.persistence.repositories import SqliteRestaurantRepository, SqlalchemyRestaurantRepository
 from src.domain.app.restaurant_service import RestaurantService
 
@@ -12,10 +12,10 @@ blueprint = Blueprint("restaurant", __name__)
 
 @blueprint.route("/restaurants", methods=["GET"])
 def get_restaurants():
-    restaurant_repository = SqliteRestaurantRepository()
+    restaurant_repository = SqlalchemyRestaurantRepository()
     restaurant_service = RestaurantService(restaurant_repository)
     restaurants = restaurant_service.get_all_restaurants()
-    return create_response(restaurants, RestaurantSchema)
+    return create_response(restaurants, PaginatedRestaurants)
 
 
 @blueprint.route("/restaurants", methods=["POST"])
@@ -41,7 +41,7 @@ def update_restaurant(json_data, id):
     validated_data = restaurant_schema.load(json_data)
 
     # Update restaurant using service
-    restaurant_repository = SqliteRestaurantRepository()
+    restaurant_repository = SqlalchemyRestaurantRepository()
     restaurant_service = RestaurantService(restaurant_repository)
     restaurant_updated = restaurant_service.update_restaurant(validated_data)
     return create_response(restaurant_updated, RestaurantSchema)
@@ -50,7 +50,7 @@ def update_restaurant(json_data, id):
 @blueprint.route("/restaurants/<string:id>", methods=["DELETE"])
 def remove_restaurant(id):
     # Update restaurant using service
-    restaurant_repository = SqliteRestaurantRepository()
+    restaurant_repository = SqlalchemyRestaurantRepository()
     restaurant_service = RestaurantService(restaurant_repository)
     restaurant_removed = restaurant_service.remove_restaurant(id)
     return create_response(restaurant_removed, RestaurantSchema)

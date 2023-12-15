@@ -14,7 +14,7 @@ class RestaurantService:
         self.restaurant_repository = restaurant_repository
 
 
-    def get_all_restaurants(self) -> List[Restaurant]:
+    def get_all_restaurants(self) -> dict:
         return self.restaurant_repository.get_all()
 
 

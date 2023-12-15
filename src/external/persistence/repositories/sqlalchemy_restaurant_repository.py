@@ -45,7 +45,7 @@ class SqlalchemyRestaurantRepository:
             raise Exception("Error deleting object")
         
 
-    def get_all(self, query_params=None) -> List[Restaurant]:
+    def get_all(self, query_params=None) -> dict:
         try:
             query_set = self.base_class.query
 
