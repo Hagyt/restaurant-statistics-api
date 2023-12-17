@@ -1,3 +1,4 @@
 from .sqlite_restaurant_repository import SqliteRestaurantRepository
+from .sqlalchemy_restaurant_repository import SqlalchemyRestaurantRepository
 
-__all__ = ["SqliteRestaurantRepository"]
+__all__ = ["SqliteRestaurantRepository", "SqlalchemyRestaurantRepository"]

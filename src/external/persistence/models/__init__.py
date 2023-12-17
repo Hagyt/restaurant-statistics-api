@@ -1,4 +1,4 @@
-from .restaurant import Restaurant
+from .restaurant import RestaurantModel
 
 
-__all__ = ["Restaurant"]
+__all__ = ["RestaurantModel"]
