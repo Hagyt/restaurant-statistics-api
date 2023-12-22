@@ -6,7 +6,7 @@ from src.domain.model.restaurant import Restaurant
 
 class RestaurantRepository(ABC):
     @abstractmethod
-    def create(self, restaurant: Restaurant) -> Restaurant:
+    def create(self, data: dict) -> Restaurant:
         pass
 
     

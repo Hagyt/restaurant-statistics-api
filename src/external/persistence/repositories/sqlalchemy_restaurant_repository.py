@@ -1,21 +1,23 @@
-from typing import List
+from geoalchemy2.functions import ST_DWithin, ST_GeomFromText
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.domain.model import Restaurant
 from src.external.persistence.models import RestaurantModel
 from src.external.persistence.databases import sqlalchemy_db as db
+from src.domain import INSIDE_CIRCLE_SEARCH
 
 
 class SqlalchemyRestaurantRepository:
     base_class = RestaurantModel
     DEFAULT_NOT_FOUND_MESSAGE = "Restaurant model was not found"
+    DEFAULT_PAGINATE = True
     DEFAULT_PER_PAGE = 10
     DEFAULT_PAGE = 1
 
 
-    def create(self, restaurant: Restaurant):
+    def create(self, data: dict) -> Restaurant:
         try:
-            created_object = self.base_class(**restaurant.__dict__)
+            created_object = self.base_class(**data)
             db.session.add(created_object)
             db.session.commit()
             return created_object
@@ -54,6 +56,7 @@ class SqlalchemyRestaurantRepository:
 
             return self.create_pagination(query_params, query_set)
         except SQLAlchemyError as e:
+            print(e)
             raise Exception("Error getting all objects")
     
 
@@ -63,12 +66,26 @@ class SqlalchemyRestaurantRepository:
     
 
     def _apply_query_params(self, query, query_params):
+        function_query_param = query_params.get("function")
+
+        if function_query_param == INSIDE_CIRCLE_SEARCH:
+            radius_query_param = query_params.get("radius")
+            center_query_param = query_params.get("center_point")
+            postgis_point = ST_GeomFromText(f"SRID=4326;{center_query_param.wkt}")
+            query = query.filter(
+                ST_DWithin(self.base_class._geom, postgis_point, radius_query_param)
+            )
         return query
 
 
     def create_pagination(self, query_params, query_set):
         if query_params is None:
             query_params = {}
+
+        paginate = query_params.get("PAGINATE", self.DEFAULT_PAGINATE)
+
+        if not paginate:
+            return query_set.all()
         page = query_params.get("PAGE", self.DEFAULT_PAGE)
         per_page = query_params.get(
             "PER_PAGE", self.DEFAULT_PER_PAGE
