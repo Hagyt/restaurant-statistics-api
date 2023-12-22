@@ -64,7 +64,7 @@ def get_statistics(qparams):
     validated_data = search_area_schema.load(qparams)
 
     # Get statistics using service
-    restaurant_repository = SqliteRestaurantRepository()
+    restaurant_repository = SqlalchemyRestaurantRepository()
     restaurant_service = RestaurantService(restaurant_repository)
     statistics = restaurant_service.get_area_restaurants_statistics(
         validated_data.get("latitude"),

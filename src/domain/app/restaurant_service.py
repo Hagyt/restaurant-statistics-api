@@ -19,8 +19,11 @@ class RestaurantService:
 
 
     def create_restaurant(self, data: dict) -> Restaurant:
-        new_restaurant = Restaurant(**data)
-        return self.restaurant_repository.create(new_restaurant)
+        data["geom"] = {
+            "lng": data["lng"],
+            "lat": data["lat"]
+        }
+        return self.restaurant_repository.create(data)
 
 
     def update_restaurant(self, data: dict) -> Restaurant:
@@ -39,9 +42,10 @@ class RestaurantService:
         query_params = {
             'function': INSIDE_CIRCLE_SEARCH,
             'center_point': circle_center,
-            'radius': radius
+            'radius': radius,
+            'PAGINATE': False
         }
-        paginatedRestaurants = self.restaurant_repository.get_all(query_params)
+        restaurants = self.restaurant_repository.get_all(query_params)
 
         # Init stastistics object
         statistics = {
@@ -51,15 +55,15 @@ class RestaurantService:
         }
 
         # Check if there are restaurants
-        if len(paginatedRestaurants.items) > 0:
+        if len(restaurants) > 0:
             # Count restaurants
-            count = len(paginatedRestaurants.items)
+            count = len(restaurants)
 
             """
             Average rating
             """
             # Get rating values from restaurants
-            rating_list = [r.rating for r in paginatedRestaurants.items]
+            rating_list = [r.rating for r in restaurants]
             # Calculate average rating
             average = sum(rating_list) / count
 
