@@ -1,3 +1,4 @@
+import logging
 from geoalchemy2.functions import ST_DWithin, ST_GeomFromText
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -5,6 +6,9 @@ from src.domain.model import Restaurant
 from src.external.persistence.models import RestaurantModel
 from src.external.persistence.databases import sqlalchemy_db as db
 from src.domain import INSIDE_CIRCLE_SEARCH
+
+
+logger = logging.getLogger(__name__)
 
 
 class SqlalchemyRestaurantRepository:
@@ -20,9 +24,10 @@ class SqlalchemyRestaurantRepository:
             created_object = self.base_class(**data)
             db.session.add(created_object)
             db.session.commit()
+            logger.info("Restaurant object created")
             return created_object
         except SQLAlchemyError as e:
-            print(e)
+            logger.error(e)
             db.session.rollback()
             raise Exception("Error creating object in database")
 
@@ -31,8 +36,10 @@ class SqlalchemyRestaurantRepository:
         try:
             update_object = self.get(object_id)
             update_object.update(db, data)
+            logger.info("Restaurant object updated")
             return update_object
         except SQLAlchemyError as e:
+            logger.error(e)
             db.session.rollback()
             raise Exception("Error updating object")
 
@@ -41,8 +48,10 @@ class SqlalchemyRestaurantRepository:
         try:
             delete_object = self.get(object_id)
             delete_object.delete(db)
+            logger.info("Restaurant object deleted")
             return delete_object
         except SQLAlchemyError as e:
+            logger.error(e)
             db.session.rollback()
             raise Exception("Error deleting object")
         
@@ -56,7 +65,7 @@ class SqlalchemyRestaurantRepository:
 
             return self.create_pagination(query_params, query_set)
         except SQLAlchemyError as e:
-            print(e)
+            logger.error(e)
             raise Exception("Error getting all objects")
     
 
